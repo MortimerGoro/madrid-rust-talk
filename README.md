@@ -1,30 +1,15 @@
-SuperSaiyanJS
+Rust as a C/C++ alternative
 =============
 
-Presentation about JavaScript performance
+Talk at MadRust meetup
 
-Preview: http://mortimergoro.github.io/SuperSaiyanJS/#/
-
-### Contents
-
-- JavaScript perfomance
-- 	Understand how a modern JS Engine works
-- 	Profile and Write optimized code mindfully
-- 	C++ vs JS performance example
-- Rendering Performance
-- 	Canvas 2D tips
-- 	WebGL tips
-- 	Common pitfalls
-- CocoonJS
-- 	How does it work?
-- 	Challenges
-
+Preview: http://mortimergoro.github.io/madrid-rust-talk/#/
 
 ### License
 
 The MIT License (MIT)
 
-Copyright (c) 2013 MortimerGoro
+Copyright (c) 2018 MortimerGoro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
