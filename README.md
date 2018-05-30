@@ -3,7 +3,7 @@ Rust as a C/C++ alternative
 
 Talk at MadRust meetup
 
-Preview: http://mortimergoro.github.io/madrid-rust-talk/#/
+Preview: http://mortimergoro.github.io/rust-cpp-alternative-talk/#/
 
 ### License
 
