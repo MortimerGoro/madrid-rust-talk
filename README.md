@@ -1,3 +1,27 @@
+SuperSaiyanJS
+=============
+
+Presentation about JavaScript performance
+
+Preview: http://mortimergoro.github.io/SuperSaiyanJS/#/
+
+### Contents
+
+- JavaScript perfomance
+- 	Understand how a modern JS Engine works
+- 	Profile and Write optimized code mindfully
+- 	C++ vs JS performance example
+- Rendering Performance
+- 	Canvas 2D tips
+- 	WebGL tips
+- 	Common pitfalls
+- CocoonJS
+- 	How does it work?
+- 	Challenges
+
+
+### License
+
 The MIT License (MIT)
 
 Copyright (c) 2013 MortimerGoro
@@ -18,3 +42,4 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

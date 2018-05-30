@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Rust as a alternative to C/C++</title>
+
+		<meta name="description" content="Android NDK Survival Guide">
+		<meta name="author" content="Imanol Fernandez">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<script src="jquery.js"></script>
+
+		<style type="text/css">
+		.gameList{
+			margin: 0;
+			padding: 0;
+		}
+		.gameList li{
+			margin-left: -25px;
+			list-style-type: none;
+			float: left;
+			text-align: center;
+		}
+        iframe {
+            background: transparent !important;   
+        }
+        code {
+        	font-size: xx-large !important;
+        }
+        .white {
+            color:white !important;
+        }
+		.reveal .controls div.navigate-left,
+		.reveal .controls div.navigate-left.enabled {
+		  border-right-color: white; }
+
+		.reveal .controls div.navigate-right,
+		.reveal .controls div.navigate-right.enabled {
+		  border-left-color: white; }
+
+		.reveal .controls div.navigate-up,
+		.reveal .controls div.navigate-up.enabled {
+		  border-bottom-color: white; }
+
+		.reveal .controls div.navigate-down,
+		.reveal .controls div.navigate-down.enabled {
+		  border-top-color: white; }
+
+		.left {
+			left:-8.33%;
+			text-align: left;
+			float: left;
+			width:50%;
+			z-index:-10;
+		 }
+
+		.right {
+			left:31.25%;
+			top: 75px;
+			float: right;
+			text-align: right;
+			z-index:-10;
+			width:50%;
+		}
+
+		 @font-face {
+  			font-family: 'SaiyanSans';
+  			src: url('Saiyan-Sans.ttf');
+		}
+		</style>
+	</head>
+
+	<body>
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section data-background="img/splash.png">
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Today, we're going to talk about</h3>
+					<ul>
+						<li>Rust as a C/C++ alternative</li>
+						<ul>
+							<li>Build System</li>
+							<li>Type system</li>
+							<li>Data races</li>
+							<li>Traits vs C++ classes</li>
+							<li>Error handling</li>
+						</ul>
+						<li>Real project examples</li>
+             			<li>Conclusions</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>System Programming Languages</h3>
+					<img src="img/motto.jpeg" width="500" style="border:none;" />
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Build system</h3>
+					<p><img src="img/dependencies.jpg" width="600" style="border:none;" /></p>
+					<p>What should a good build system provide?</p>
+					<ul>
+						<li>Compilation for different targets/platforms</li>
+						<li>Dependency resolution</li>
+						<li>Optional features</li>
+						<li>Custom build steps</li>
+						<li>Automated testing</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg">
+					<p><img src="img/play.jpg" width="1000" style="border:none;" /></p>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+						<p><img src="img/einstein.jpg" width="450" style="border:none;" /></p>
+						<div class="left">
+								<ul style="padding-left: 15%">
+									<li>ffmpeg: make</li>
+									<li>v8: GN, GYP</li>
+									<li>SpiderMonkey: autoconf</li>
+									<li>JavaScriptCore: Xcode</li>
+									<li>Chromium: ninja</li>
+								</ul>
+							</div>
+						<div class="right">
+							<ul style="padding-right: 15%">
+								<li>Cocos2dx: cmake</li>
+								<li>Boost: b2, bjam</li>
+								<li>OpenSSL: custom</li>
+								<li>Blender: SCons</li>
+								<li>Others: Konan, Bazel</li>
+							</ul>
+						</div>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<p><img src="img/biicode.png" width="600" style="border:none;" /></p>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+						<h3>Rust Build System: Cargo</h3>
+						<p><img src="img/wolf.png" width="800" style="border:none;" /></p>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+						<h3>Cargo</h3>
+						<p>Super easy to set up</p>
+						<pre><code class="bash" data-trim>
+[package]
+name = "my-binary"
+version = "0.1.0"
+
+[dependencies]
+uuid = "1.0"
+my-library = { git = 'https://github.com/mortimer/my-library.git' }
+my-renderer = { path = '../..//my-renderer' }
+						</code></pre>
+						<p>Super easy to build &amp; run</p>
+						<p><img src="img/cargo_build.png" width="700" style="border:none;" /></p>
+				</section>
+
+				<section data-background="speed.jpg" style="background-image:url('white.png');">
+						<h3>Cargo</h3>
+						<p>Multiple platform compilations for free</p>
+						<pre><code class="bash" data-trim>
+#Desktop							
+cargo build
+#Android
+cargo build --target=armv7-linux-androideabi
+#iOS
+cargo build --target=aarch64-apple-ios
+#WebAssembly
+cargo build --target=wasm32-unknown-unknown
+						</code></pre>
+						<p>Development workflow</p>
+						<pre><code class="bash" data-trim>
+[replace]
+# Compile project with a SpiderMonkey fork
+mozjs_sys = {path = '/home/mortimer/Projects/mozjs_fork'}
+						</code></pre>
+				</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+				<h3>Optional features in C++</h3>
+				<p><img src="img/ifdef.png" width="1000" style="border:none;" /></p>
+				<ul>
+					<li>Deep into the header code</li>
+					<li>Can't validate errors</li>
+					<li>Warning: #ifdef vs #define FEATURE_FLAG 0</li>
+					<li>No dependency resolution...</li>
+				</ul>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+				<h3>Optional features in C++</h3>
+				<p><img src="img/firebase.png" width="1000" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Optional features in Rust/Cargo</h3>
+					<p>Easy &amp; elegant set up</p>
+					<pre><code class="bash" data-trim>
+[features]
+default = ["openvr", "mock"]
+openvr = ["libloading"]
+mock = []
+googlevr = ["gvr-sys"]
+oculusvr = ["ovr-mobile-sys"]
+					</code></pre>
+					<p>Easy &amp; elegant optional code</p>
+					<pre><code class="bash" data-trim>
+#[cfg(feature = "oculusvr")]
+mod oculusvr;
+					</code></pre>
+					<p>Ease &amp; safe to use</p>
+					<pre><code class="bash" data-trim>
+[dependencies]
+rust-webvr = {features = ["openvr", "googlevr", "oculusvr"], version = "0.9"}
+					</code></pre>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+				<h3>Reliable platform detection in C++</h3>
+				</h3>
+				<p><img src="img/platforms.png" width="1000" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Reliable platform detecion in Rust</h3>
+					</h3>
+					<pre><code class="bash" data-trim>
+#[cfg(target_os = "linux")]
+fn platform_hello() {
+  println!("You are running Linux!");
+}
+#[cfg(target_os = "android")]
+fn platform_hello() {
+  println!("You are running Android!");
+}	
+#[cfg(target_os = "ios")]
+fn platform_hello() {
+  println!("You are running iOS!");
+}	
+#[cfg(target_os = "macos")]
+fn platform_hello() {
+  println!("You are running MacOS!");
+}	
+					</code></pre>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ 'modules'</h3>
+					<pre><code class="c++" data-trim>
+#include &lt;string&gt;
+int main() {
+	return 0;
+}
+					</code></pre>
+					<p>Show preprocessor output</p>
+					<pre><code class="bash" data-trim>
+gcc -E test.cpp > result.text
+					</code></pre>
+					<p>22,020 lines!</p>
+					<pre><code class="c++" data-trim>
+template <class _Tp>
+struct __attribute__ ((__type_visibility__("default"))) owner_less<weak_ptr<_Tp> >
+	: binary_function<weak_ptr<_Tp>, weak_ptr<_Tp>, bool>
+{
+	typedef bool result_type;
+	__attribute__ ((__visibility__("hidden"), __always_inline__))
+	bool operator()( weak_ptr<_Tp> const& __x, weak_ptr<_Tp> const& __y) const
+		{return __x.owner_before(__y);}
+	__attribute__ ((__visibility__("hidden"), __always_inline__))
+	bool operator()(shared_ptr<_Tp> const& __x, weak_ptr<_Tp> const& __y) const
+		{return __x.owner_before(__y);}
+	__attribute__ ((__visibility__("hidden"), __always_inline__))
+	bool operator()( weak_ptr<_Tp> const& __x, shared_ptr<_Tp> const& __y) const
+		{return __x.owner_before(__y);}
+};
+					</code></pre>
+			</section>
+
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Problems of current C++ 'modules'</h3>
+					<ul>
+						<li>Compile-time scalability</li>
+						<li>Fragility: textual inclusion, macro</li>
+						<li>Conventional workarounds: include guard, pragma</li>
+						<li>Tool confusion: include orders, etc.</li>
+					</ul>
+
+					<p><img src="img/tim.jpg" width="400" style="border:none;" /></p>
+					<p>Tim Sweeney about C++17 Modules working draft</p>
+					<blockquote cite="https://www.reddit.com/r/cpp/comments/7b2och/c_modules/">
+						&ldquo;I'm trying to understand the rationale for the oddity of the C++ modules TS&rdquo;
+					</blockquote>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust modules</h3>
+					</h3>
+					<p><img src="img/rust_crates.png" width="1000" style="border:none;" /></p>
+			</section>	
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Unit testing</h3>
+					<p>C++: Research &amp; set up testing framework</p>
+					<pre><code class="c++" data-trim>
+#include &lt;gtest/gtest.h&gt;
+
+TEST(MyTestSuitName, MyTestCaseName) {
+  int actual = 1;
+  EXPECT_GT(actual, 0);
+  EXPECT_EQ(1, actual) &lt;&lt; "Should be equal to one";
+}
+					</code></pre>
+					<p>Rust: Built-in Unit testing</p>
+					<pre><code class="c++" data-trim>
+#[test]
+fn it_works() {
+  assert_eq!(4, adder::add_two(2));
+}
+					</code></pre>
+					<p>Run all tests</p>
+					<pre><code class="bash" data-trim>
+$) cargo test
+Compiling adder v0.0.1 (file:///home/you/projects/adder)
+	Running target/adder-91b3e234d4ed382a
+
+running 1 test
+test tests::it_works ... ok
+					</code></pre>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Custom build steps in C++</h3>
+					<ul>
+						<li>Python</li>
+						<li>Confusing CMAKE COMMAND syntax</li>
+						<li>Custom</li>
+					</ul>
+					<p>vs</p>
+					<h3>Custom build steps Rust</h3>
+					<ul>
+						<li>Consistent with the language</li>
+					</ul>
+					<pre><code class="c++" data-trim>
+fn main() {
+  if let Ok(aar_out_dir) = env::var("AAR_OUT_DIR") {
+	fs::copy(&Path::new("src/api/googlevr/aar/GVRService.aar"),
+			 &Path::new(&aar_out_dir).join("GVRService.aar")).unwrap();
+
+	fs::copy(&Path::new("src/api/oculusvr/aar/OVRService.aar"),
+			 &Path::new(&aar_out_dir).join("OVRService.aar")).unwrap();
+  }
+}
+					</code></pre>
+			</section>
+
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Other modern build systems: Gradle</h3>
+					<p><img src="img/gradle.jpg" width="600" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Other modern build systems: NPM</h3>
+					<p><img src="img/npm.jpg" width="800" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ coding style guide</h3>
+					<p><img src="img/tabs.jpg" width="600" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ coding style guide: Mozilla</h3>
+					<p><img src="img/style_mozilla.png" width="1000" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ coding style guide: Chromium</h3>
+					<p><img src="img/style_chrome.png" width="1000" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ coding style guide: Oculus</h3>
+					<p><img src="img/style_oculus.png" width="1000" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust coding style guide</h3>
+					<ul>
+						<li>One less thing to worry about</li>
+						<li>Consistency is very valuable</li>
+					</ul>
+					<pre><code class="c++" data-trim>
+warning: variable `frameData` should have
+a snake case name such as `frame_data`
+					</code></pre>
+					<p><img src="img/rust_style.png" width="700" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Type system</h3>
+					<p><img src="img/compile.jpg" width="600" style="border:none;" /></p>
+					<ul>
+						<li>Rust: super strict typing</li>
+						<li>C++: strict typing</li>
+						<li>JavaScript: untyped</li>
+					</ul>
+					<p>Rust, C/C++, Javascript</p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ bad defaults: const and copies</h3>
+					<p><img src="img/hitler.jpg" width="300" style="border:none;" /></p>
+					<p><img src="img/const.png" width="700" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust: good defaults</h3>
+					<ul>
+						<li>Inmutability &amp; borrow/move semantics</li>
+						<li>Explicit copies: Vec::clone()</li>
+					</ul>
+					<p><img src="img/rust_references.png" width="900" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust compile time code safety</h3>
+					<p>e.g.: Concurrency without data races</p>
+					<p><img src="img/safety1.jpg" width="900" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust compile time code safety</h3>
+					<p>e.g.: Concurrency without data races</p>
+					<p><img src="img/safety2.jpg" width="900" style="border:none;" /></p>
+					<p></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust compile time code safety</h3>
+					<p><img src="img/multiview.png" width="1200" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ experts don't make errors</h3>
+					<p><img src="img/experts_tim.png" width="1000" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ experts don't make errors</h3>
+					<p><img src="img/junior.jpg" width="800" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ experts don't make errors</h3>
+					<p><img src="img/dont_care.jpg" width="800" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ experts don't make errors</h3>
+					<p><img src="img/chromium.jpg" width="800" style="border:none;" /></p>
+					<blockquote>
+							&ldquo;std::string is responsible for almost half of all allocations in the Chrome browser process; please be careful how you use it!&rdquo;
+					</blockquote>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>C++ experts don't make errors</h3>
+					<p>Errors cost money</p>
+					<p>Errors can cost a company it's reputation</p>
+					<p><img src="img/money.jpg" width="800" style="border:none;" /></p>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Metaprogramming &amp; compile time code</h3>
+					<p>C++ macros: Simple text substitution</p>
+					<pre><code class="c++" data-trim>
+#define FIVE_TIMES(x) 5 * x
+int main() {
+  printf("%d\n", FIVE_TIMES(2 + 3)); 
+  return 0;
+}
+					</code></pre>
+					<p>Variable captures</p>
+					<pre><code class="c++" data-trim>
+#define LOG(msg) do { \
+  int state = get_log_state(); \
+  if (state > 0) { \
+    printf("log(%d): %s\n", state, msg); \
+  } \
+} while (0)
+					</code></pre>
+					<pre><code class="c++" data-trim>
+const char *state = "It's over 9000!";
+LOG(state);
+					</code></pre>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Rust hygienic macro system</h3>
+					<p>macro expansion happens in a distinct syntax context</p>
+					<pre><code class="c++" data-trim>
+macro_rules! log {
+  ($msg:expr) => {{
+	let state: i32 = get_log_state();
+	if state > 0 {
+	  println!("log({}): {}", state, $msg);
+	}
+  }};
+}		
+					</code></pre>
+					<p>Procedural &amp; built-in macros</p>
+					<pre><code class="c++" data-trim>
+#[derive(Debug, Clone)]
+pub struct VRFrameData {
+  pub timestamp: f64,
+  pub left_projection_matrix: [f32; 16],
+  pub left_view_matrix: [f32; 16],
+  pub right_projection_matrix: [f32; 16],
+  pub right_view_matrix: [f32; 16],
+  pub pose: VRPose,
+}
+					</code></pre>
+					<pre><code class="c++" data-trim>
+println!("{:?}", frame_data);
+					</code></pre>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Compile time code</h3>
+					<pre><code class="c++" data-trim>
+constexpr factorial (int n){
+	return n > 0 ? n * factorial( n - 1 ) : 1;
+}	
+
+constexpr int value = factorial(10);
+println!("factorial: %d", value);
+					</code></pre>
+					<ul>
+						<li>Macro is another language into the language</li>
+						<li>constexpr is very powerful, still limited in Rust.</li>
+					</ul>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Compile time string concatenation</h3>
+					<img src="img/compiletime.png" width="1000" style="border:none;"/>
+			</section>
+
+			<section data-background="img/jonathan_blow.png">
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+				<h3>Traits vs class hierarchies</h3>
+				<p>Rust favors "composition over inheritance”</p>
+				<img src="img/structs.png" width="1000" style="border:none;"/>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Traits vs class hierarchies</h3>
+					<img src="img/svg.png" width="1000" style="border:none;"/>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Traits vs class hierarchies</h3>
+					<img src="img/tesellator.png" width="1000" style="border:none;"/>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Traits vs class hierarchies</h3>
+					<img src="img/static_dispatch.png" width="1000" style="border:none;"/>
+			</section>
+
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Class hierarchies</h3>
+					<img src="img/inherit.png" width="1000" style="border:none;"/>
+					<ul>
+						<li>vtable vs trait pointers</li>
+						<li>Template alternative</li>
+						<li>C++ concepts</li>
+					</ul>
+			</section>
+
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Error handling in C++: Exceptions</h3>
+					<ul>
+						<li>Handling exceptions is not enforced by the type-system</li>
+						<li>Dispatching to the catch block is orders of magnitude slower</li>
+					</ul>
+					<img src="img/exception.png" width="1000" style="border:none;"/>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Error handling in C++: Error codes</h3>
+					<img src="img/error_codes.png" width="700" style="border:none;"/>
+					<ul>
+						<li>Error-codes are ancient and used everywhere</li>
+						<li>Functional composition is hard</li>
+						<li>Out-parameters different memory layout</li>
+					</ul>
+			</section>
+
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Error handling in Rust</h3>
+					<img src="img/error_handling.png" width="1000" style="border:none;"/>
+					<ul>
+						<li>Option&lt;T&gt;, Result&lt;T&gt; Tuples, etc</li>
+						<li>Super powerful enums</li>
+						<li>C++ std::expected</li>
+					</ul>
+			</section>
+
+			<section data-background="speed.jpg" style="background-image:url('white.png');">
+					<h3>Conclussions</h3>
+					<ul>
+						<li>Is Rust a valid C/C++ alternative?</li>
+						<li>Is Rust ready to use for real projects?</li>
+						<li>Is Rust difficult to learn?</li>
+						<li>Rust vs C++ tooling?</li>
+						<li>Slow compilation times?</li>
+					</ul>
+			</section>
+
+
+
+				<section data-background="speed.jpg">
+					<h2 style="margin-top:-50px;color:#3F3A3A;">Thank you!</h2>
+					<p><img src="img/questions.jpg" width="500" style="border:none;" /></p>
+					<h3>@MortimerGoro</h3>
+				</section>
+			</div>
+
+
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+        
+            $(document).ready( function() {
+
+            });
+
+
+		</script>
+
+
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/controldeck-slides.js"></script>
+	</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://localhost/~mortimer/ndk/#/45 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+
+		<title>Android NDK Survival Guide</title>
+
+		<meta name="description" content="Android NDK Survival Guide">
+		<meta name="author" content="Imanol Fernandez">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="http://localhost/~mortimer/ndk/css/reveal.min.css">
+		<link rel="stylesheet" href="http://localhost/~mortimer/ndk/css/theme/simple.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="http://localhost/~mortimer/ndk/lib/css/zenburn.css">
+
+		<script src="./Android NDK Survival Guide_files/jquery.js"></script>
+
+		<style type="text/css">
+		.gameList{
+			margin: 0;
+			padding: 0;
+		}
+		.gameList li{
+			margin-left: -25px;
+			list-style-type: none;
+			float: left;
+			text-align: center;
+		}
+        iframe {
+            background: transparent !important;   
+        }
+        code {
+        	font-size: xx-large !important;
+        }
+        .white {
+            color:white !important;
+        }
+		.reveal .controls div.navigate-left,
+		.reveal .controls div.navigate-left.enabled {
+		  border-right-color: white; }
+
+		.reveal .controls div.navigate-right,
+		.reveal .controls div.navigate-right.enabled {
+		  border-left-color: white; }
+
+		.reveal .controls div.navigate-up,
+		.reveal .controls div.navigate-up.enabled {
+		  border-bottom-color: white; }
+
+		.reveal .controls div.navigate-down,
+		.reveal .controls div.navigate-down.enabled {
+		  border-top-color: white; }
+
+		 @font-face {
+  			font-family: 'SaiyanSans';
+  			src: url('Saiyan-Sans.ttf');
+		}
+		</style>
+	</head>
+
+	<body style="-webkit-transition: -webkit-transform 0.8s ease; transition: -webkit-transform 0.8s ease;">
+		<div class="reveal default center" data-transition-speed="default" data-background-transition="default">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides" style="width: 960px; height: 700px; zoom: 0.7521428571428571;">
+				<section data-background="backgrounds/vegeta.jpg" hidden="" class="past" style="top: -103px; display: block;">
+                <!--<h1 style="font-size:100px; font-family: SaiyanSans; color: #f5f287; text-shadow: 4px 4px 20px #000000">Super Saiyan JavaScript</h1>-->
+                <img style="border:0; box-shadow:none; background:transparent;" src="./Android NDK Survival Guide_files/title.png">
+				</section>
+
+				<section data-background="speed.jpg" style="top: -350px; display: block; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h2>About me</h2>
+					<img src="./Android NDK Survival Guide_files/scouter.jpg" width="200">
+					<h3>Imanol Fernández</h3>
+					<ul>
+						<li>Lead Developer at Ludei</li>
+						<li>C/C++, JS, iOS, Android &amp; Graphics guy</li>
+						<li>Games, high Level &amp; low Level stuff</li>
+                        <li>Obsessed with raw performance</li>
+                        <li>Dragon Ball &amp; Metal Gear Solid ultra fan</li>
+						<li>@MortimerGoro</li>
+					</ul>
+				</section>
+
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Today, we're going to talk about</h3>
+					<ul>
+						<li>What is Android NDK?</li>
+						<li>Why use NDK?</li>
+						<li>How to use NDK?
+							<ul>
+								<li>Call native from Java</li>
+								<li>Call Java from native</li>
+							</ul>
+                        </li><li>Tips and Experiences</li>
+             			<li>Evil things</li>
+						</ul>
+
+					
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>What is Android NDK?</h3>
+					<p><img src="./Android NDK Survival Guide_files/ndk.jpg" width="500" style="border:none;"></p>
+					<ul>
+						<li>Native Development Kit</li>
+						<li>Use languages such as C and C++</li>
+						<li>JNI API: Java Native Interface</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Why use NDK?</h3>
+					<p>Android APIs were designed with Java in mind</p>
+					<p>But...</p>
+					<p><img src="./Android NDK Survival Guide_files/portability.png" width="300" style="border:none;"></p>
+					<ul>
+						<li>Portability</li>
+						<li>Reuse your code almost everywhere</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Portability examples</h3>
+					<p><img src="./Android NDK Survival Guide_files/chromium.jpg" width="500" style="border:none;"></p>
+					<ul>
+						<li>Chromium</li>
+						<li>Android WebView is 90% C++</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Portability examples</h3>
+					<p><img src="./Android NDK Survival Guide_files/mailbox.png" width="300" style="border:none;"></p>
+					<ul>
+						<li>Dropbox, Mailbox, etc.</li>
+						<li>C++ library to share non-UI code</li>
+						<li><a href="http://oleb.net/blog/2014/05/how-dropbox-uses-cplusplus-cross-platform-development/">Link</a></li>
+					</ul>
+				</section>
+
+				<section data-background="backgrounds/cocoonjs.jpg" hidden="" class="past" style="top: -20px; display: none;">
+					<h3 style="margin-top:-300px">Portability examples</h3>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Portability examples</h3>
+					<p><img src="./Android NDK Survival Guide_files/slidesoccer.png" width="800" style="border:none;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Why use NDK?</h3>
+					<p>Performance</p>
+					<p><img src="./Android NDK Survival Guide_files/bolt.jpg" width="500" style="border:none;"></p>
+					<ul>
+						<li>C/C++ is faster than Java (*)</li>
+						<li>Low level access</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Why use NDK?</h3>
+					<p>Special purposes</p>
+					<p><img src="./Android NDK Survival Guide_files/wolf.png" width="500" style="border:none;"></p>
+					<ul>
+						<li>Java libraries are only a subset</li>
+						<li>Hardware and kernel access</li>
+						<li>Use powerful libraries (ex: ffmpeg)</li>
+						<li>Bypass Java rules</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Why use NDK?</h3>
+					<p>Feel like a Saiyan</p>
+					<p><img src="./Android NDK Survival Guide_files/feel.jpg" width="500" style="border:none;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Feel like a Saiyan</h3>
+					<p>I don't need a stacktrace... (V8 bugfix)</p>
+					<p><img src="./Android NDK Survival Guide_files/crashlog.png" width="600" style="border:none;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Before learning NDK, you should know...</h3>
+					<p><img src="./Android NDK Survival Guide_files/darkside.jpg" width="250" style="border:none;"></p>
+					<p>Google: <q>“NDK always increases your app complexity”</q></p>
+					<p>Carmack: <q>“the Android NDK makes ME feel like punching things”</q></p>
+					<p><q>“Using NDK is not a pleasure”</q></p>
+					<p><q>“I haven't seen anyone ever get NDK code debugging to work”</q></p>
+					<p>Unfixed NDK bug: <q>“Android is the most crappy OS ever, EVER!”<q></q></q></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>But it's worth the effort</h3>
+					<p><img src="./Android NDK Survival Guide_files/awesomeness.png" width="600" style="border:none;"></p>
+					<p>Relation between NDK and Apps awesomeness</p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to add NDK to a Android project?</h3>
+					<p>1) Install NDK: Download <a href="https://developer.android.com/tools/sdk/ndk/index.html">link</a> and add to PATH</p>
+					<pre><code class="bash" data-trim="">$ ndk-build -v
+GNU Make <span class="number">3.81</span>
+Copyright (C) <span class="number">2006</span>  Free Software Foundation, Inc.</code></pre>
+					<p>2) Create Application.mk file inside JNI folder</p>
+					<pre><code class="bash" data-trim="">APP_MODULES := JNITest
+APP_ABI := armeabi armeabi-v7a
+APP_PLATFORM := android-<span class="number">9</span>
+APP_STL := gnustl_static</code></pre>
+					<ul>
+						<li>Select architectures: ARM, ARMv7, x86, etc..</li>
+						<li>gnustl vs stlport</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to add NDK to an Android project?</h3>
+					<p>3) Create Android.mk file inside JNI folder</p>
+					<pre><code class="bash" data-trim="">LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE := JNITest
+LOCAL_SRC_FILES := \
+    main.cpp
+LOCAL_LDLIBS := \
+    -llog \
+    -lc
+include $(BUILD_SHARED_LIBRARY)</code></pre>
+					<ul>
+						<li>Define sources and dependencies</li>
+						<li>Define output: static vs shared</li>
+					</ul>
+					<p>4) Compile your code using ndk-build from terminal</p>
+					<pre><code class="bash" data-trim="">$ ndk-build
+[armeabi-v7a] Compile++ thumb: JNITest &lt;= main.cpp
+[armeabi-v7a] SharedLibrary  : libJNITest.so
+[armeabi-v7a] Install: libJNITest.so =&gt; libs/armeabi-v7a/libJNITest.so</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>More about Android.mk</h3>
+					<p>Add dependencies (example V8)</p>
+					<pre><code class="bash" data-trim="">MY_LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+LOCAL_MODULE := v8_android
+LOCAL_SRC_FILES := \
+	/Users/mortimer/Projects/v8/out/libv8_base.a
+include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_PATH := $(MY_LOCAL_PATH)
+LOCAL_STATIC_LIBRARIES := \
+	v8_android
+LOCAL_C_INCLUDES := \
+	/Users/mortimer/Projects/v8/include</code></pre>
+					<p>Enable C++11 and other features</p>
+					<pre><code class="bash" data-trim="">LOCAL_CFLAGS := \
+	-frtti \
+	-fexceptions \
+	-std=c++<span class="number">11</span> \
+	-D__GXX_EXPERIMENTAL_CXX0X__</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to call native from Java</h3>
+					<p>Java side</p>
+					<pre><code class="java" data-trim=""><span class="keyword">package</span> com.droidcon;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>{
+    <span class="annotation">@Override</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        System.loadLibrary(<span class="string">"JNITest"</span>);
+        String value = callNative();
+        Log.d(<span class="string">"Test"</span>, value);
+    }
+
+    <span class="keyword">private</span> <span class="keyword">native</span> String callNative();
+}</code></pre>
+					<ul>
+						<li>System.loadLibrary()</li>
+						<li>"native" keyword for methods</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to call native from Java</h3>
+					<p>C++ side (main.cpp)</p>
+					<pre><code class="c++ cpp" data-trim="" style="font-size:x-large !important;"><span class="preprocessor">#include &lt;jni.h&gt;</span>
+<span class="keyword">extern</span> <span class="string">"C"</span> {   
+    jint JNI_OnLoad(JavaVM* vm, <span class="keyword">void</span>* reserved) {
+        JNIEnv* env;
+        <span class="keyword">if</span> (vm-&gt;GetEnv(<span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">void</span>**&gt;(&amp;env), JNI_VERSION_1_6) != JNI_OK) {
+            <span class="keyword">return</span> -<span class="number">1</span>;
+        }
+        <span class="keyword">return</span> JNI_VERSION_1_6;
+    }  
+
+    jstring java_com_droidcon_TestActivity_callNative
+    (JNIEnv*env, jobject obj)
+    {
+        <span class="keyword">return</span> env-&gt;NewStringUTF(<span class="string">"Hello from C++"</span>);
+    }
+}</code></pre>
+					<ul>
+						<li>JNI_OnLoad is optional</li>
+						<li>Function name must package based</li>
+						<li>extern C</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Java and JNI types equivalence</h3>
+					<p style="text-align: center;">
+</p><table style="margin: 0 auto;text-align:left">
+    <tbody><tr>
+        <th>Java Type</th>
+        <th>Native Type</th>
+        <th>Signature</th>
+    </tr>
+    <tr>
+        <td>byte</td>
+        <td>jbyte</td>
+        <td>B</td>
+    </tr>
+    <tr>
+        <td>short</td>
+        <td>jshort</td>
+        <td>S</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>jint</td>
+        <td>I</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>jlong</td>
+        <td>L</td>
+    </tr>
+    <tr>
+        <td>float</td>
+        <td>jfloat</td>
+        <td>F</td>
+    </tr>
+    <tr>
+        <td>double</td>
+        <td>jdouble</td>
+        <td>D</td>
+    </tr>
+    <tr>
+        <td>char</td>
+        <td>jchar</td>
+        <td>C</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>jboolean</td>
+        <td>Z</td>
+    </tr>
+    <tr>
+        <td>java.lang.Object</td>
+        <td>jobject</td>
+        <td>Ljava/lang/Object;</td>
+    </tr>
+    <tr>
+        <td>java.lang.String</td>
+        <td>jstring</td>
+        <td>Ljava/lang/String;</td>
+    </tr>
+    <tr>
+        <td>Object[]</td>
+        <td>jobjectarray</td>
+        <td>[L/java/lang/Object;</td>
+    </tr>
+    <tr>
+        <td>java.lang.Class</td>
+        <td>jclass</td>
+        <td>L/java/lang/Class;</td>
+    </tr>
+</tbody></table>
+					<p></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to call Java from native</h3>
+					<p>Each Java method has a signature</p>
+					<pre><code class="java" data-trim=""><span class="keyword">long</span> test(<span class="keyword">int</span> n, String s, <span class="keyword">int</span>[] arr);</code></pre>
+					<p>Example:</p>
+					<pre><code class="java" data-trim=""><span class="string">"(ILjava/lang/String;[I)J"</span></code></pre>
+					<p>Concat all parameter signatures</p>
+					<p>Set return signature at the right</p>
+					<p>Generate signature manually or...</p>
+					<pre><code class="bash" data-trim="">javap <span class="operator">-s</span> -classpath bin/classes com.example.myActivity</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>How to call Java from native</h3>
+					<pre><code class="java" data-trim="">#define MYCLASS <span class="string">"java/com/droidcon/TestClass"</span>
+<span class="keyword">void</span> callJava() {
+    <span class="comment">//get env instance</span>
+    JNIEnv* env = getJNIEnv();
+    <span class="comment">//get class and method IDS</span>
+    jclass classID = env-&gt;FindClass(MYCLASS);
+    jmethodID methodID = env-&gt;GetStaticMethodID(classID, 
+        <span class="string">"testMethod"</span>, 
+        <span class="string">"(L/java/lang/String;I)I"</span>);
+    <span class="comment">//create jstring</span>
+    jstring str = env-&gt;NewStringUTF(<span class="string">"Hello!"</span>);
+    <span class="comment">//call static method</span>
+    env-&gt;CallStaticIntMethod(classID, methodID, str, <span class="number">4</span>);
+    <span class="comment">//delete refs and check exceptions</span>
+    env-&gt;DeleteLocalRef(str);
+    CHECK_JAVA_EXCEPTION
+}</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Create Java objects from native</h3>
+					<pre><code class="java" data-trim="">jmethodID ctor = env-&gt;GetMethodID(classID,
+<span class="string">"&lt;init&gt;"</span>,<span class="string">"()V"</span>);
+jboject obj = env-&gt;NewObject(classID, ctor);</code></pre>
+					<p>Call instance methods</p>
+					<pre><code class="java" data-trim="">env-&gt;CallObjectMethod(obj, methodID, params);</code></pre>
+					<p>Global vs local references</p>
+					<pre><code class="java" data-trim=""><span class="comment">//protect object for long term usage</span>
+jobject globalRef = env-&gt;NewGlobalRef(instance);</code></pre>
+					<p>The global reference is guaranteed to be valid until you call DeleteGlobalRef</p>
+					<pre><code class="java" data-trim="">env-&gt;DeleteGlobalRef(globalRef);</code></pre>
+
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Pass a C++ callback to Java</h3>
+					<p>Create a helper struct</p>
+					<pre><code class="java" data-trim="">struct MyCallback {
+    std::function&lt;<span class="keyword">void</span>(<span class="keyword">const</span> string &amp; result)&gt; callback;
+}</code></pre>
+					<p>Pass the pointer to struct as long</p>
+					<pre><code class="cpp" data-trim="">MyCallback * helper = <span class="keyword">new</span> MyCallback();
+helper-&gt;callback = myCallbackFunction;	
+jlong callbackPtr = <span class="keyword">reinterpret_cast</span>&lt;jlong&gt;(helper);					
+env-&gt;CallObjectMethod(obj, methodID, callbackPtr);
+					&lt;/jlong&gt;</code></pre>
+					<p>Store and pass the long back in Java</p>
+					<pre><code class="java" data-trim=""><span class="keyword">native</span> <span class="keyword">void</span> nativeResult(String result, <span class="keyword">long</span> callback);</code></pre>
+					<p>Reinterpret and use callback in C++</p>
+					<pre><code class="java" data-trim="">MyCallback * helper = reinterpret_cast&lt;MyCallback*&gt;(value);
+helper-&gt;callback(result);
+delete helper;</code></pre>
+
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Share raw data with native code</h3>
+					<p><img src="./Android NDK Survival Guide_files/matrix.jpg" width="500" style="border:none;"></p>
+					<p>Access a large buffer of raw data from both Java and Native</p>
+					<ul>
+						<li>Byte Array is fast on java but might need a copy in C++</li>
+						<li>Using java.nio.ByteBuffer data is not allocated on the managed heap: Direct access from native</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Tips and experiences</h3>
+					<p><img src="./Android NDK Survival Guide_files/yoda.png" width="500" style="border:none;"></p>
+					<ul>
+						<li>C++ &amp; NDK &amp; JNI are huge</li>
+					</ul>
+					<blockquote>C makes it easy to shoot yourself in the foot; C++ makes it harder, but when you do it blows your whole leg off</blockquote>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Use a build system</h3>
+					<p><img src="./Android NDK Survival Guide_files/wrongmk.jpg" width="500" style="border:none;"></p>
+					<ul>
+						<li>Linkage errors: Dependencies order on Android.mk</li>
+						<li>Gyp build system (chromium, nodejs, etc.)</li>
+						<li>Custom build system</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Integration with your IDE</h3>
+					<p><img src="./Android NDK Survival Guide_files/ide.png" width="800" style="border:none;"></p>
+					<ul>
+						<li>ndk-build: gcc output</li>
+						<li>XCode, Visual Studio, etc. can interpret the output</li>
+						<li>Plugins for some IDEs: Eclipse</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>JNI is Tedious</h3>
+					<p><img src="./Android NDK Survival Guide_files/hatejni.jpg" width="400" style="border:none;"></p>
+					<p>Solutions?</p>
+					<ul>
+						<li>Java annotations and autogeneration (ex: Chromium)</li>
+						<li>My solution: variadic templates</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Variadic Templates</h3>
+					<p>Templates that take a variable number of arguments</p>
+					<p><img src="./Android NDK Survival Guide_files/variadic.png" width="1500" style="border:none;max-width:none;max-height:none; margin-left:-20%;"></p>
+					<p>Checkout github!</p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<h3>Old code vs New code</h3>
+					<p><img src="./Android NDK Survival Guide_files/old_new2.png" width="1500" style="border:none;max-width:none;max-height:none;margin-left:-20%;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<p>Compile Time Strings</p>
+					<p><img src="./Android NDK Survival Guide_files/compiletime.png" width="900" style="border:none;max-width:none;max-height:none;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>NDK Debugging</h3>
+					<p><img src="./Android NDK Survival Guide_files/eclipse.jpg" width="300" style="border:none;"></p>
+					<p>Debugging tutorial: <a href="http://stackoverflow.com/questions/23987279/is-this-tutorial-wrong">Link</a></p>
+					<pre><code class="java" data-trim="" style="font-size:x-large !important;"><span class="comment">//Debugging with logs never fails!</span>
+#include &lt;android/log.h&gt;
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,<span class="string">"TAG"</span>,__VA_ARGS__)</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Stay tuned for new updates</h3>
+					<p><img src="./Android NDK Survival Guide_files/cantadillas.jpg" width="400" style="border:none;"></p>
+					<ul>
+						<li>Performance dropdown between r9 and r9d</li>
+						<li>Crashes calling cos() on neon devices</li>
+						<li>Crashes using std::regex</li>
+						<li>Crystax NDK was need in the past: wchar_t</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<p><img src="./Android NDK Survival Guide_files/babidi.png" width="1000" style="border:none;max-width:none;max-height:none;"></p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Real case: Extend WebSettings class</h3>
+					<pre><code class="java" data-trim=""><span class="keyword">package</span> android.webkit;
+<span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">PublicWebSettings</span> <span class="keyword">extends</span> <span class="title">WebSettings</span> </span>{
+    <span class="keyword">public</span> PublicWebSettings() {
+    }
+}</code></pre>
+					<pre><code class="java" data-trim=""><span class="keyword">package</span> com.ludei.chromium;
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LudeiWebSettings</span> <span class="keyword">extends</span> <span class="title">PublicWebSettings</span></span>{
+<span class="comment">//(...)</span>
+}</code></pre>
+					<p>Seems easy but...</p>
+					<ul>
+						<li>Package access</li>
+						<li>Different constructors on different APIs</li>
+						<li>Some constructors are private</li>
+						<li>Reflection API setAccessible doesn't work</li>
+						<li>Reflection API can't call super methods</li>
+					</ul>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Bypass Java Constructors</h3>
+					<pre><code class="java" data-trim="" style="font-size:x-large !important;"><span class="keyword">static</span> jobject CreateLudeiWebSettings(JNIEnv* env, jclass clazz,
+    jobject ctx)
+{
+    jclass cls = env-&gt;FindClass(<span class="string">"com/ludei/chromium/LudeiWebSettings"</span>);
+    <span class="comment">//create java object bypassing constructor calls</span>
+    jobject object = env-&gt;AllocObject(cls);
+    <span class="comment">//call intermediante constructor manually</span>
+    cls = env-&gt;FindClass(<span class="string">"android/webkit/WebSettings"</span>);
+    jmethodID constructor = env-&gt;GetMethodID(cls, <span class="string">"&lt;init&gt;"</span>, 
+    <span class="string">"(Landroid/content/Context;Landroid/webkit/WebView;)V"</span>);
+    jobject context = ctx;
+    jobject webview = <span class="number">0</span>; 
+    env-&gt;CallNonvirtualVoidMethod(object, cls, constructor, context, webview);
+
+    <span class="keyword">return</span> object;
+}</code></pre>
+					<p>You can allocate Java Objects without calling constructors!</p>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Override and call private Super methods</h3>
+					<pre><code class="java" data-trim=""><span class="class"><span class="keyword">class</span> <span class="title">MyLayout</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> </span>{
+    MyView(Context ctx) {
+        <span class="keyword">super</span>(ctx);
+    }
+    <span class="keyword">private</span> <span class="keyword">void</span> updateMatrix() {
+        super.updateMatrix(); <span class="comment">//private method error</span>
+        System.out.println(<span class="string">"updateMatrix"</span>);
+    }
+}</code></pre>
+					<p>Can't be solved with Reflection: it calls overrided method</p>
+					<pre><code class="java" data-trim="">View.class.getDeclaredMethod(<span class="string">"updateMatrix"</span>).invoke(<span class="keyword">this</span>);</code></pre>
+					<p>But you can do that with JNI ;)</p><p>
+					</p><pre><code class="java" data-trim="">classID = env-&gt;FindClass(<span class="string">"android/view/View"</span>);
+methodID = env-&gt;GetMethodID(classID,<span class="string">"updateMatrix"</span>,<span class="string">"()V"</span>);
+env-&gt;CallNonvirtualVoidMethod(object,classID, methodID);</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>JSaiyan Library</h3>
+					<p>I have created this library. Checkout at <a href="https://github.com/MortimerGoro/JSaiyan">https://github.com/MortimerGoro/JSaiyan</a></p>
+					<pre><code class="java" data-trim=""><span class="comment">//get the shared instance</span>
+jsaiyan.Unsafe unsafe = jsaiyan.Unsafe.instance();</code></pre>
+					<p>Bypass constructors</p>
+					<pre><code class="java" data-trim="">unsafe.allocateObject(LudeiWebSettings.<span class="class"><span class="keyword">class</span>);</span></code></pre>
+					<p>Call overrided super method</p>
+					<pre><code class="java" data-trim=""><span class="class"><span class="keyword">class</span> <span class="title">MyLayout</span> <span class="keyword">extends</span> <span class="title">LinearLayout</span> </span>{
+  MyView(Context ctx) {
+    <span class="keyword">super</span>(ctx);
+  }
+  <span class="keyword">private</span> <span class="keyword">void</span> updateMatrix() {
+    unsafe.callSuperMethod(<span class="keyword">this</span>,View.<span class="class"><span class="keyword">class</span>,"<span class="title">updateMatrix</span>");
+    <span class="title">System</span>.<span class="title">out</span>.<span class="title">println</span>("<span class="title">updateMatrix</span>");
+  }
+}</span></code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>JSaiyan Library</h3>
+					<p>Direct memory management</p>
+					<pre><code class="java" data-trim=""><span class="comment">//alloc raw memory</span>
+<span class="keyword">long</span> address = unsafe.malloc(<span class="number">10</span>);
+<span class="comment">//free raw memory</span>
+unsafe.free(address);
+<span class="comment">//copy raw memory</span>
+unsafe.memcpy(dest, source, size);</code></pre>
+					<p>sizeOf for Java Objects</p>
+					<pre><code class="java" data-trim=""><span class="comment">//gets the shallow size of a Java object</span>
+unsafe.sizeOf(javaObject);</code></pre>
+					<p>Map between raw memory and Java Objects</p>
+					<pre><code class="java" data-trim=""><span class="comment">//Gets the address in memory of an Object</span>
+<span class="keyword">long</span> address = unsafe.toAddress(javaObject);
+<span class="comment">//Gets object from its address in memory</span>
+Object rawObject = unsafe.fromAddress(rawAddress);</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -20px; display: none; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Unlimited possibilities</h3>
+					<p>Shallow copy of a Object</p>
+					<pre><code class="java" data-trim=""><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>{
+    String name;
+    <span class="keyword">int</span> age;
+    String country;
+}
+
+Person p1 = <span class="keyword">new</span> Person(<span class="string">"Peter"</span>, <span class="number">25</span>, <span class="string">"England"</span>);
+Person p2 = (Person)unsafe.shallowCopy(p1);</code></pre>
+					<p>Internal implementation</p>
+					<pre><code class="java" data-trim=""><span class="keyword">public</span> Object shallowCopy(Object obj) {
+    <span class="keyword">long</span> size = sizeOf(obj);
+    <span class="keyword">long</span> start = toAddress(obj);
+    <span class="keyword">long</span> address = malloc(size);
+    memcpy(address, start, size);
+    <span class="keyword">return</span> fromAddress(address);
+}</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -350px; display: block; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Chuck Norris' Way of Coding</h3>
+					<p><img src="./Android NDK Survival Guide_files/chuck.jpg" width="500" style="border:none;"></p>
+					<pre><code class="java" data-trim=""><span class="keyword">public</span> <span class="keyword">void</span> doWork(Object obj) {
+    unsafe.throwException(<span class="keyword">new</span> ParseException());
+}</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -350px; display: block; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+				<h3>Dalvik source code</h3>
+					<p>Object.h source code: <a href="http://osxr.org/android/source/dalvik/vm/oo/Object.h">Link</a></p>
+					<pre><code class="java" data-trim="">struct Object {
+    <span class="comment">/* ptr to class object */</span>
+    ClassObject*    clazz;
+    u4              lock;
+};</code></pre>
+					<pre><code class="java" data-trim="">struct ClassObject : Object {
+u4              instanceData[CLASS_FIELD_SLOTS];
+<span class="keyword">const</span> <span class="keyword">char</span>*     descriptor;
+<span class="keyword">char</span>*           descriptorAlloc;
+u4              accessFlags;
+u4              serialNumber;
+DvmDex*         pDvmDex;
+ClassStatus     status;
+ClassObject*    verifyErrorClass;
+u4              initThreadId;
+size_t          objectSize;
+ClassObject*    elementClass;
+<span class="keyword">int</span>             arrayDim;
+PrimitiveType   primitiveType;
+ClassObject*    <span class="keyword">super</span>;
+Object*         classLoader;
+<span class="comment">//(...)</span></code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -350px; display: block; background-image: url(http://localhost/~mortimer/ndk/white.png);" hidden="" class="past">
+					<p><img src="./Android NDK Survival Guide_files/clint.jpg" width="500" style="border:none;"></p>
+					<pre><code class="java" data-trim="">Integer harry = <span class="keyword">new</span> Integer(<span class="number">43</span>);
+unsafe.changeClass(harry, String.<span class="class"><span class="keyword">class</span>);
+<span class="title">String</span> <span class="title">yehaa</span> = (<span class="title">String</span>)(<span class="title">Object</span>) <span class="title">harry</span>;</span></code></pre>
+					<pre><code class="java" data-trim="" style="font-size:x-large !important;"><span class="keyword">public</span> <span class="keyword">void</span> changeClass(Object instance, Object other) {
+    <span class="keyword">long</span> classAdreess = normalize(wrapper.getInt(instance, <span class="number">0</span>));
+    <span class="keyword">long</span> fakeClassAddress = normalize(wrapper.getInt(other, <span class="number">0</span>));
+    putAddress(toAddress(instance), fakeClassAddress);
+}</code></pre>
+				</section>
+
+				<section data-background="speed.jpg" style="top: -350px; display: block; background-image: url(http://localhost/~mortimer/ndk/white.png);" class="present">
+				<h3>Access private Android C++ APIs</h3>
+					<p><img src="./Android NDK Survival Guide_files/chuck.jpg" width="500" style="border:none;"></p>
+					<pre><code class="java" data-trim=""><span class="keyword">public</span> <span class="keyword">void</span> doWork(Object obj) {
+    unsafe.throwException(<span class="keyword">new</span> ParseException());
+}</code></pre>
+				</section>
+
+				<section data-background="backgrounds/cocoonjs.jpg" hidden="" class="future" style="top: -154px; display: block;">
+					<h2 style="margin-top:-50px;color:#3F3A3A;">Thank you!</h2>
+					<h3 style="position:absolute;top:220px;left:40px;color:#3F3A3A">@MortimerGoro</h3>
+				</section>
+			</div>
+
+
+
+		<div class="backgrounds"><div class="slide-background past" data-background-hash="backgrounds/vegeta.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/backgrounds/vegeta.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="backgrounds/cocoonjs.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/backgrounds/cocoonjs.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background past" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background present" data-background-hash="speed.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/speed.jpg);"></div><div class="slide-background future" data-background-hash="backgrounds/cocoonjs.jpgnullnullnullnullnullnull" style="background-image: url(http://localhost/~mortimer/ndk/backgrounds/cocoonjs.jpg);"></div></div><div class="progress" style="display: block;"><span style="width: 1252.1739130434783px;"></span></div><aside class="controls" style="display: block;"><div class="navigate-left enabled"></div><div class="navigate-right enabled"></div><div class="navigate-up"></div><div class="navigate-down"></div></aside><div class="slide-number"></div><div class="state-background"></div><div class="pause-overlay"></div></div>
+
+		<script src="./Android NDK Survival Guide_files/head.min.js"></script>
+		<script src="./Android NDK Survival Guide_files/reveal.min.js"></script>
+
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+        
+            $(document).ready( function() {
+
+            });
+
+
+		</script><script type="text/javascript" src="./Android NDK Survival Guide_files/highlight.js"></script><script type="text/javascript" src="./Android NDK Survival Guide_files/zoom.js"></script><script type="text/javascript" src="./Android NDK Survival Guide_files/notes.js"></script>
+
+
+		<script src="./Android NDK Survival Guide_files/socket.io.js"></script>
+		<script src="./Android NDK Survival Guide_files/controldeck-slides.js"></script>
+	
+
+</body></html>
